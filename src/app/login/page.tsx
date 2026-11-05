@@ -21,10 +21,8 @@ export default async function LoginPage({
   }
 
   const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-  if (user) redirect(next)
+  const { data } = await supabase.auth.getClaims()
+  if (data?.claims) redirect(next)
 
   return (
     <div className="mx-auto max-w-sm py-12">

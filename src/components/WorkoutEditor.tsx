@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { newStep } from '@/lib/presets'
 import { buildTimeline, formatTime, totalSeconds } from '@/lib/timeline'
 import type { Phase, Step, StepKind, WorkoutInput } from '@/lib/types'
@@ -24,6 +25,8 @@ interface Props {
 }
 
 export function WorkoutEditor({ value, onChange }: Props) {
+  /** What is being typed into the rounds box; null when it isn't being edited. */
+  const [roundsText, setRoundsText] = useState<string | null>(null)
   const total = totalSeconds(buildTimeline(value))
   const hasRoundStep = value.steps.some((s) => s.phase === 'round')
 
@@ -75,7 +78,7 @@ export function WorkoutEditor({ value, onChange }: Props) {
         <div>
           <span className="mb-1 block text-sm text-zinc-400">Rounds</span>
           <div className="flex items-center gap-2">
-            <button type="button" className={`${iconBtn} border border-zinc-700`} onClick={() => setRounds(value.rounds - 1)} aria-label="One less round">
+            <button type="button" className={`${iconBtn} border border-zinc-700`} onClick={() => { setRoundsText(null); setRounds(value.rounds - 1) }} aria-label="One less round">
               −
             </button>
             <input
@@ -83,12 +86,18 @@ export function WorkoutEditor({ value, onChange }: Props) {
               inputMode="numeric"
               min={1}
               max={99}
-              value={value.rounds}
-              onChange={(e) => setRounds(parseInt(e.target.value, 10))}
+              value={roundsText ?? value.rounds}
+              onChange={(e) => {
+                // Keep exactly what was typed (even empty) until the field loses focus.
+                setRoundsText(e.target.value)
+                const n = parseInt(e.target.value, 10)
+                if (Number.isFinite(n) && n >= 1) setRounds(n)
+              }}
+              onBlur={() => setRoundsText(null)}
               aria-label="Number of rounds"
               className="w-16 rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-center tabular-nums outline-none focus:border-emerald-500"
             />
-            <button type="button" className={`${iconBtn} border border-zinc-700`} onClick={() => setRounds(value.rounds + 1)} aria-label="One more round">
+            <button type="button" className={`${iconBtn} border border-zinc-700`} onClick={() => { setRoundsText(null); setRounds(value.rounds + 1) }} aria-label="One more round">
               +
             </button>
           </div>

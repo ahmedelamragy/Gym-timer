@@ -56,10 +56,14 @@ export async function updateWorkout(id: string, input: unknown): Promise<Result>
   redirect('/workouts')
 }
 
-export async function deleteWorkout(id: string) {
+export async function deleteWorkout(id: string): Promise<Result | undefined> {
   const { supabase, user } = await requireUser()
-  if (!user) return
+  if (!user) return { error: 'Please sign in first' }
 
-  await supabase.from('workouts').delete().eq('id', id)
+  // RLS limits this to the user's own row; zero rows back means not theirs or already gone.
+  const { data: rows, error } = await supabase.from('workouts').delete().eq('id', id).select('id')
+  if (error) return { error: 'Could not delete. Please try again.' }
+  if (!rows?.length) return { error: 'Workout not found' }
+
   revalidatePath('/workouts')
 }

@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { TimerDisplay, segmentTheme } from '@/components/TimerDisplay'
 import { useIntervalTimer } from '@/hooks/useIntervalTimer'
 import { useWakeLock } from '@/hooks/useWakeLock'
@@ -43,17 +43,24 @@ export function RunClient({ initial, exitHref }: Props) {
 
   useWakeLock(status === 'running')
 
-  // Space bar pauses and resumes.
+  // Space bar pauses and resumes. The listener is added once and reads the latest
+  // timer through a ref, instead of being re-added on every tick.
+  const timerRef = useRef(timer)
+  useEffect(() => {
+    timerRef.current = timer
+  })
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.code !== 'Space') return
+      const t = timerRef.current
+      if (e.code !== 'Space' || e.repeat) return
+      if (t.status !== 'running' && t.status !== 'paused') return
       e.preventDefault()
-      if (status === 'running') timer.pause()
-      else if (status === 'paused') timer.resume()
+      if (t.status === 'running') t.pause()
+      else t.resume()
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [status, timer])
+  }, [])
 
   if (!loaded) return null
 

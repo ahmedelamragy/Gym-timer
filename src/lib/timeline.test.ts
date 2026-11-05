@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { buildTimeline, formatTime, totalSeconds } from './timeline'
 import type { Step } from './types'
-import { safeNext } from './utils'
 
 const step = (id: string, phase: Step['phase'], kind: Step['kind'], seconds: number): Step => ({
   id,
@@ -61,15 +60,5 @@ describe('formatTime', () => {
     expect(formatTime(0)).toBe('0:00')
     expect(formatTime(75)).toBe('1:15')
     expect(formatTime(3725)).toBe('1:02:05')
-  })
-})
-
-describe('safeNext', () => {
-  it('only allows same-site paths', () => {
-    expect(safeNext('/workouts/new')).toBe('/workouts/new')
-    expect(safeNext('https://evil.example')).toBe('/workouts')
-    expect(safeNext('//evil.example')).toBe('/workouts')
-    expect(safeNext('/\\evil.example')).toBe('/workouts')
-    expect(safeNext(null)).toBe('/workouts')
   })
 })

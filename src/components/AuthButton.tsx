@@ -6,11 +6,10 @@ export async function AuthButton() {
   if (!isSupabaseConfigured()) return null
 
   const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const { data } = await supabase.auth.getClaims()
+  const claims = data?.claims
 
-  if (!user) {
+  if (!claims) {
     return (
       <Link href="/login" className="rounded-full border border-zinc-700 px-4 py-1.5 text-sm hover:bg-zinc-800">
         Sign in
@@ -24,7 +23,7 @@ export async function AuthButton() {
         My workouts
       </Link>
       <span className="hidden max-w-40 truncate text-zinc-500 sm:inline">
-        {user.email}
+        {typeof claims.email === 'string' ? claims.email : ''}
       </span>
       <form action="/auth/signout" method="post">
         <button className="text-zinc-400 hover:text-zinc-100">Sign out</button>

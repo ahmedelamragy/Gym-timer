@@ -1,5 +1,10 @@
 let ctx: AudioContext | null = null
 
+function resume() {
+  // iOS reports "interrupted" after a screen lock or phone call; both need a resume.
+  if (ctx && ctx.state !== 'running' && ctx.state !== 'closed') void ctx.resume().catch(() => {})
+}
+
 /** Must be called from a user gesture (the Start button) so browsers allow sound. */
 export function unlockAudio() {
   if (typeof window === 'undefined') return
@@ -7,8 +12,14 @@ export function unlockAudio() {
     window.AudioContext ??
     (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
   if (!Ctor) return
-  ctx ??= new Ctor()
-  if (ctx.state === 'suspended') void ctx.resume()
+  if (!ctx) {
+    ctx = new Ctor()
+    // Phones suspend audio when the screen locks; wake it when the page is shown again.
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') resume()
+    })
+  }
+  resume()
 }
 
 export function beep(frequency = 880, durationMs = 150, delayMs = 0, volume = 0.3) {

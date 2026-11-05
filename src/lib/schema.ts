@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import type { WorkoutInput } from './types'
 
 const phase = z.enum(['warmup', 'round', 'cooldown'])
 const kind = z.enum(['work', 'rest'])
@@ -26,6 +27,15 @@ export const workoutSchema = z
     message: 'Add at least one step to the round',
     path: ['steps'],
   })
+
+/**
+ * Checks a row read back from the database. Rows can be changed outside the app
+ * (SQL editor, direct API calls), so they are never trusted to match the types.
+ */
+export function parseStoredWorkout(row: unknown): WorkoutInput | null {
+  const parsed = workoutSchema.safeParse(row)
+  return parsed.success ? parsed.data : null
+}
 
 /** Lenient schema for a half-edited draft kept in localStorage. */
 export const draftSchema = z.object({

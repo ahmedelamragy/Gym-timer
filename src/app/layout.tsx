@@ -9,6 +9,8 @@ const inter = Inter({ subsets: ['latin'], display: 'swap' })
 export const metadata: Metadata = {
   title: 'Gym Timer',
   description: 'Interval timer with rounds and saved workouts',
+  // iPhone home-screen app: full screen, dark status bar.
+  appleWebApp: { capable: true, title: 'Gym Timer', statusBarStyle: 'black-translucent' },
 }
 
 export const viewport: Viewport = {

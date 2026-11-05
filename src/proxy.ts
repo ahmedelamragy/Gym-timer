@@ -37,11 +37,11 @@ export async function proxy(request: NextRequest) {
   })
 
   // Refreshes the session cookie if needed. Do not put code between this and createServerClient.
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  // getClaims verifies the JWT signature locally (the project uses ES256 signing keys),
+  // so signed-in page loads skip a round trip to Supabase's Auth server.
+  const { data } = await supabase.auth.getClaims()
 
-  if (!user && isProtected) return toLogin(request)
+  if (!data?.claims && isProtected) return toLogin(request)
   return response
 }
 
