@@ -5,6 +5,20 @@ import { createMagicLinkSender } from '@/lib/supabase/client'
 
 type State = { status: 'idle' | 'sending' | 'sent' } | { status: 'error'; message: string }
 
+/** Supabase's built-in mailer only sends a few emails per hour per project. */
+function errorMessage(error: { code?: string; status?: number; message: string }) {
+  if (error.code === 'over_email_send_rate_limit' || /rate limit/i.test(error.message)) {
+    return 'أُرسلت روابط كثيرة خلال وقت قصير. انتظر قليلاً (حتى ساعة) ثم حاول مرة أخرى، واضغط مرة واحدة فقط.'
+  }
+  if (error.code === 'over_request_rate_limit' || error.status === 429) {
+    return 'محاولات كثيرة. انتظر دقيقة ثم حاول مرة أخرى.'
+  }
+  if (error.code === 'email_address_invalid' || error.code === 'validation_failed') {
+    return 'تأكّد من كتابة الإيميل بشكل صحيح.'
+  }
+  return 'تعذّر إرسال الرابط. حاول مرة أخرى بعد قليل.'
+}
+
 export function LoginForm({ next }: { next: string }) {
   const [email, setEmail] = useState('')
   const [state, setState] = useState<State>({ status: 'idle' })
@@ -21,7 +35,7 @@ export function LoginForm({ next }: { next: string }) {
       options: { emailRedirectTo: redirectTo.toString() },
     })
 
-    setState(error ? { status: 'error', message: error.message } : { status: 'sent' })
+    setState(error ? { status: 'error', message: errorMessage(error) } : { status: 'sent' })
   }
 
   if (state.status === 'sent') {
