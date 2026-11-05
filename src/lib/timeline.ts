@@ -13,7 +13,7 @@ export interface Segment {
 function toSegment(step: Step, round: number | null): Segment {
   return {
     key: `${step.id}:${round ?? '-'}`,
-    label: step.label.trim() || (step.kind === 'rest' ? 'راحة' : 'تمرين'),
+    label: step.label.trim() || (step.kind === 'rest' ? 'Rest' : 'Work'),
     seconds: step.seconds,
     phase: step.phase,
     kind: step.kind,

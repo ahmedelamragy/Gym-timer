@@ -8,15 +8,15 @@ type State = { status: 'idle' | 'sending' | 'sent' } | { status: 'error'; messag
 /** Supabase's built-in mailer only sends a few emails per hour per project. */
 function errorMessage(error: { code?: string; status?: number; message: string }) {
   if (error.code === 'over_email_send_rate_limit' || /rate limit/i.test(error.message)) {
-    return 'أُرسلت روابط كثيرة خلال وقت قصير. انتظر قليلاً (حتى ساعة) ثم حاول مرة أخرى، واضغط مرة واحدة فقط.'
+    return 'Too many sign-in emails were sent recently. Wait a while (up to an hour), then try again and press Send only once.'
   }
   if (error.code === 'over_request_rate_limit' || error.status === 429) {
-    return 'محاولات كثيرة. انتظر دقيقة ثم حاول مرة أخرى.'
+    return 'Too many attempts. Wait a minute and try again.'
   }
   if (error.code === 'email_address_invalid' || error.code === 'validation_failed') {
-    return 'تأكّد من كتابة الإيميل بشكل صحيح.'
+    return 'Please check the email address.'
   }
-  return 'تعذّر إرسال الرابط. حاول مرة أخرى بعد قليل.'
+  return 'Could not send the link. Please try again shortly.'
 }
 
 export function LoginForm({ next }: { next: string }) {
@@ -41,16 +41,16 @@ export function LoginForm({ next }: { next: string }) {
   if (state.status === 'sent') {
     return (
       <div className="rounded-2xl border border-emerald-800 bg-emerald-950/40 p-5">
-        <p className="mb-1 font-semibold">تفقّد بريدك 📬</p>
+        <p className="mb-1 font-semibold">Check your email 📬</p>
         <p className="text-sm text-zinc-300">
-          أرسلنا رابط الدخول إلى <span dir="ltr">{email}</span>. افتحه من أي جهاز.
+          We sent a sign-in link to <span>{email}</span>. You can open it on any device.
         </p>
         <button
           type="button"
           onClick={() => setState({ status: 'idle' })}
           className="mt-4 text-sm text-emerald-400 hover:underline"
         >
-          استخدم إيميلاً آخر
+          Use a different email
         </button>
       </div>
     )
@@ -62,7 +62,7 @@ export function LoginForm({ next }: { next: string }) {
         type="email"
         required
         autoComplete="email"
-        dir="ltr"
+       
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="you@example.com"
@@ -72,7 +72,7 @@ export function LoginForm({ next }: { next: string }) {
         disabled={state.status === 'sending'}
         className="w-full rounded-xl bg-emerald-500 py-3 font-bold text-zinc-950 hover:bg-emerald-400 disabled:opacity-50"
       >
-        {state.status === 'sending' ? 'جارٍ الإرسال…' : 'أرسل رابط الدخول'}
+        {state.status === 'sending' ? 'Sending…' : 'Email me a sign-in link'}
       </button>
       {state.status === 'error' && <p className="text-sm text-red-400">{state.message}</p>}
     </form>

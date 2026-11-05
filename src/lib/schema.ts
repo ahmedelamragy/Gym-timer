@@ -5,12 +5,12 @@ const kind = z.enum(['work', 'rest'])
 
 export const stepSchema = z.object({
   id: z.string().min(1).max(64),
-  label: z.string().trim().min(1, 'كل خطوة تحتاج اسماً').max(40, 'اسم الخطوة طويل جداً'),
+  label: z.string().trim().min(1, 'Every step needs a name').max(40, 'Step name is too long'),
   seconds: z
     .number()
     .int()
-    .min(1, 'مدة كل خطوة ثانية واحدة على الأقل')
-    .max(3600, 'أقصى مدة للخطوة ساعة'),
+    .min(1, 'Each step must be at least 1 second')
+    .max(3600, 'A step can be at most 1 hour'),
   phase,
   kind,
 })
@@ -18,12 +18,12 @@ export const stepSchema = z.object({
 /** Strict schema used before saving to the database. */
 export const workoutSchema = z
   .object({
-    name: z.string().trim().min(1, 'اكتب اسماً للتمرين').max(60, 'اسم التمرين طويل جداً'),
-    rounds: z.number().int().min(1, 'جولة واحدة على الأقل').max(99, 'أقصى عدد 99 جولة'),
-    steps: z.array(stepSchema).min(1).max(50, 'أقصى عدد 50 خطوة'),
+    name: z.string().trim().min(1, 'Give the workout a name').max(60, 'Workout name is too long'),
+    rounds: z.number().int().min(1, 'At least 1 round').max(99, 'At most 99 rounds'),
+    steps: z.array(stepSchema).min(1).max(50, 'At most 50 steps'),
   })
   .refine((w) => w.steps.some((s) => s.phase === 'round'), {
-    message: 'أضف خطوة واحدة على الأقل في الجولة',
+    message: 'Add at least one step to the round',
     path: ['steps'],
   })
 

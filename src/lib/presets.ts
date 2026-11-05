@@ -19,9 +19,9 @@ export const PRESETS: Preset[] = [
       name: 'Tabata',
       rounds: 8,
       steps: [
-        newStep('warmup', 'rest', 'استعد', 10),
-        newStep('round', 'work', 'تمرين', 20),
-        newStep('round', 'rest', 'راحة', 10),
+        newStep('warmup', 'rest', 'Get ready', 10),
+        newStep('round', 'work', 'Work', 20),
+        newStep('round', 'rest', 'Rest', 10),
       ],
     }),
   },
@@ -32,20 +32,20 @@ export const PRESETS: Preset[] = [
       name: 'HIIT',
       rounds: 10,
       steps: [
-        newStep('warmup', 'work', 'إحماء', 120),
-        newStep('round', 'work', 'تمرين', 40),
-        newStep('round', 'rest', 'راحة', 20),
-        newStep('cooldown', 'rest', 'تهدئة', 120),
+        newStep('warmup', 'work', 'Warm-up', 120),
+        newStep('round', 'work', 'Work', 40),
+        newStep('round', 'rest', 'Rest', 20),
+        newStep('cooldown', 'rest', 'Cool-down', 120),
       ],
     }),
   },
   {
     id: 'boxing',
-    name: 'ملاكمة 3:00/1:00 × 6',
+    name: 'Boxing 3:00/1:00 × 6',
     build: () => ({
-      name: 'جولات ملاكمة',
+      name: 'Boxing rounds',
       rounds: 6,
-      steps: [newStep('round', 'work', 'جولة', 180), newStep('round', 'rest', 'راحة', 60)],
+      steps: [newStep('round', 'work', 'Round', 180), newStep('round', 'rest', 'Rest', 60)],
     }),
   },
   {
@@ -54,7 +54,7 @@ export const PRESETS: Preset[] = [
     build: () => ({
       name: 'EMOM',
       rounds: 10,
-      steps: [newStep('round', 'work', 'كل دقيقة', 60)],
+      steps: [newStep('round', 'work', 'Every minute', 60)],
     }),
   },
 ]

@@ -60,9 +60,9 @@ export function RunClient({ initial, exitHref }: Props) {
   if (!workout || segments.length === 0) {
     return (
       <div className="py-24 text-center">
-        <p className="mb-4 text-zinc-400">لا يوجد تمرين للتشغيل.</p>
+        <p className="mb-4 text-zinc-400">No workout to run.</p>
         <Link href="/" className="text-emerald-400 hover:underline">
-          ارجع إلى المحرّر
+          Back to the editor
         </Link>
       </div>
     )
@@ -76,11 +76,11 @@ export function RunClient({ initial, exitHref }: Props) {
   if (status === 'idle') {
     return (
       <div className="py-16 text-center">
-        <p className="mb-2 text-zinc-400">جاهز؟</p>
-        <h1 className="mb-2 text-3xl font-bold">{workout.name || 'تمرين'}</h1>
+        <p className="mb-2 text-zinc-400">Ready?</p>
+        <h1 className="mb-2 text-3xl font-bold">{workout.name || 'Workout'}</h1>
         <p className="mb-10 text-zinc-400">
-          {workout.rounds} جولات · المدة{' '}
-          <span dir="ltr" className="tabular-nums">
+          {workout.rounds} {workout.rounds === 1 ? 'round' : 'rounds'} · Total{' '}
+          <span className="tabular-nums">
             {formatTime(total)}
           </span>
         </p>
@@ -89,11 +89,11 @@ export function RunClient({ initial, exitHref }: Props) {
           onClick={begin}
           className="size-44 rounded-full bg-emerald-500 text-3xl font-bold text-zinc-950 shadow-xl shadow-emerald-500/20 hover:bg-emerald-400"
         >
-          ابدأ
+          Start
         </button>
         <div className="mt-10">
           <Link href={exitHref} className="text-sm text-zinc-400 hover:text-zinc-100">
-            رجوع
+            Back
           </Link>
         </div>
       </div>
@@ -104,10 +104,10 @@ export function RunClient({ initial, exitHref }: Props) {
     return (
       <div className="py-20 text-center">
         <p className="mb-3 text-6xl">💪</p>
-        <h1 className="mb-2 text-3xl font-bold">أحسنت!</h1>
+        <h1 className="mb-2 text-3xl font-bold">Great work!</h1>
         <p className="mb-10 text-zinc-400">
-          أنهيت {workout.name || 'التمرين'} في{' '}
-          <span dir="ltr" className="tabular-nums">
+          You finished {workout.name || 'the workout'} in{' '}
+          <span className="tabular-nums">
             {formatTime(total)}
           </span>
         </p>
@@ -117,10 +117,10 @@ export function RunClient({ initial, exitHref }: Props) {
             onClick={begin}
             className="rounded-2xl bg-emerald-500 px-6 py-3 font-bold text-zinc-950 hover:bg-emerald-400"
           >
-            مرة أخرى
+            Again
           </button>
           <Link href={exitHref} className="rounded-2xl border border-zinc-700 px-6 py-3 hover:bg-zinc-800">
-            رجوع
+            Back
           </Link>
         </div>
       </div>
@@ -145,17 +145,17 @@ export function RunClient({ initial, exitHref }: Props) {
       />
       <div className="grid grid-cols-3 gap-3 p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
         <button type="button" onClick={timer.reset} className={ctrlBtn}>
-          إنهاء
+          End
         </button>
         <button
           type="button"
           onClick={status === 'running' ? timer.pause : timer.resume}
           className={`${ctrlBtn} bg-black/40`}
         >
-          {status === 'running' ? 'إيقاف' : 'متابعة'}
+          {status === 'running' ? 'Pause' : 'Resume'}
         </button>
         <button type="button" onClick={timer.skip} className={ctrlBtn}>
-          تخطَّ
+          Skip
         </button>
       </div>
     </div>

@@ -11,24 +11,24 @@ export default async function WorkoutsPage() {
     .select('id, name, rounds, steps, created_at, updated_at')
     .order('updated_at', { ascending: false })
 
-  if (error) throw new Error('تعذّر تحميل التمارين')
+  if (error) throw new Error('Could not load workouts')
   const workouts = (data ?? []) as Workout[]
 
   return (
     <>
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">تماريني</h1>
+        <h1 className="text-2xl font-bold">My workouts</h1>
         <Link
           href="/workouts/new"
           className="rounded-full bg-emerald-500 px-4 py-2 text-sm font-bold text-zinc-950 hover:bg-emerald-400"
         >
-          + تمرين جديد
+          + New workout
         </Link>
       </div>
 
       {workouts.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-zinc-800 p-10 text-center text-zinc-400">
-          لا توجد تمارين محفوظة بعد.
+          No saved workouts yet.
         </div>
       ) : (
         <ul className="space-y-3">
@@ -38,8 +38,8 @@ export default async function WorkoutsPage() {
                 <div className="min-w-0">
                   <h2 className="truncate font-semibold">{w.name}</h2>
                   <p className="text-sm text-zinc-400">
-                    {w.rounds} جولات ·{' '}
-                    <span dir="ltr" className="tabular-nums">
+                    {w.rounds} {w.rounds === 1 ? 'round' : 'rounds'} ·{' '}
+                    <span className="tabular-nums">
                       {formatTime(totalSeconds(buildTimeline(w)))}
                     </span>
                   </p>
@@ -48,12 +48,12 @@ export default async function WorkoutsPage() {
                   href={`/run?id=${w.id}`}
                   className="shrink-0 rounded-xl bg-emerald-500 px-4 py-2 font-bold text-zinc-950 hover:bg-emerald-400"
                 >
-                  تشغيل
+                  Run
                 </Link>
               </div>
               <div className="mt-3 flex gap-4 text-sm">
                 <Link href={`/workouts/${w.id}/edit`} className="text-zinc-300 hover:text-zinc-100">
-                  تعديل
+                  Edit
                 </Link>
                 <DeleteWorkoutButton id={w.id} name={w.name} />
               </div>

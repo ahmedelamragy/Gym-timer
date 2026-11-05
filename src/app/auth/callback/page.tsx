@@ -37,5 +37,5 @@ export default function AuthCallbackPage() {
       .then(({ error }) => window.location.replace(error ? '/login?error=link' : next))
   }, [])
 
-  return <p className="py-24 text-center text-zinc-400">جارٍ تسجيل الدخول…</p>
+  return <p className="py-24 text-center text-zinc-400">Signing you in…</p>
 }

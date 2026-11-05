@@ -13,7 +13,7 @@ export async function AuthButton() {
   if (!user) {
     return (
       <Link href="/login" className="rounded-full border border-zinc-700 px-4 py-1.5 text-sm hover:bg-zinc-800">
-        دخول
+        Sign in
       </Link>
     )
   }
@@ -21,13 +21,13 @@ export async function AuthButton() {
   return (
     <div className="flex items-center gap-3 text-sm">
       <Link href="/workouts" className="font-medium hover:text-emerald-400">
-        تماريني
+        My workouts
       </Link>
-      <span className="hidden max-w-40 truncate text-zinc-500 sm:inline" dir="ltr">
+      <span className="hidden max-w-40 truncate text-zinc-500 sm:inline">
         {user.email}
       </span>
       <form action="/auth/signout" method="post">
-        <button className="text-zinc-400 hover:text-zinc-100">خروج</button>
+        <button className="text-zinc-400 hover:text-zinc-100">Sign out</button>
       </form>
     </div>
   )

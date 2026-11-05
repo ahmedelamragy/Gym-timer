@@ -11,7 +11,7 @@ export default async function EditWorkoutPage({ params }: { params: Promise<{ id
 
   return (
     <>
-      <h1 className="mb-6 text-2xl font-bold">تعديل التمرين</h1>
+      <h1 className="mb-6 text-2xl font-bold">Edit workout</h1>
       <WorkoutForm initial={data as WorkoutInput} workoutId={id} />
     </>
   )

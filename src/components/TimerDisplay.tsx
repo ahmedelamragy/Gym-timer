@@ -1,6 +1,6 @@
 import { formatTime, type Segment } from '@/lib/timeline'
 
-const PHASE_LABEL = { warmup: 'إحماء', round: 'الجولة', cooldown: 'تهدئة' } as const
+const PHASE_LABEL = { warmup: 'Warm-up', round: 'Round', cooldown: 'Cool-down' } as const
 
 export function segmentTheme(segment: Segment | undefined) {
   if (!segment) return 'bg-zinc-950 text-zinc-100'
@@ -49,14 +49,14 @@ export function TimerDisplay({
           )}
         </p>
         <h2 className="text-4xl font-bold sm:text-5xl">{segment.label}</h2>
-        <p dir="ltr" className="text-[28vw] leading-none font-bold tabular-nums sm:text-[11rem]" aria-live="off">
+        <p className="text-[28vw] leading-none font-bold tabular-nums sm:text-[11rem]" aria-live="off">
           {formatTime(secondsLeft)}
         </p>
-        {paused && <p className="animate-pulse text-xl font-semibold">متوقف مؤقتاً</p>}
+        {paused && <p className="animate-pulse text-xl font-semibold">Paused</p>}
         {next && (
           <p className="text-lg opacity-80">
-            التالي: {next.label}{' '}
-            <span dir="ltr" className="tabular-nums">
+            Next: {next.label}{' '}
+            <span className="tabular-nums">
               ({formatTime(next.seconds)})
             </span>
           </p>

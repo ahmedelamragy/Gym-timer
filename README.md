@@ -1,63 +1,68 @@
 # Gym Timer
 
-مؤقت فترات للتمارين: خطوات مرتبة (إحماء، تمرين، راحة، تهدئة) تتكرر بعدد الجولات، مع دخول برابط سحري على الإيميل وحفظ التمارين لكل مستخدم.
+An interval timer for workouts: ordered steps (warm-up, work, rest, cool-down) that repeat for a number of rounds, with email magic-link sign-in and saved workouts per user.
 
-**التقنيات:** Next.js 16 (App Router) · Supabase (Auth + Postgres + RLS) · Tailwind CSS 4 · Vercel
+**Live:** https://gym-timer-theta.vercel.app
 
-## التشغيل محلياً
+**Stack:** Next.js 16 (App Router) · Supabase (Auth + Postgres + RLS) · Tailwind CSS 4 · Vercel
 
-يحتاج Node.js 20 أو أحدث.
+## Run locally
+
+Requires Node.js 20 or newer.
 
 ```bash
 npm install
-cp .env.local.example .env.local   # ثم ضع مفاتيح Supabase
+cp .env.local.example .env.local   # then add your Supabase keys
 npm run dev
 ```
 
-افتح http://localhost:3000. المؤقت يعمل حتى بدون مفاتيح Supabase. تسجيل الدخول والحفظ فقط يحتاجانها.
+Open http://localhost:3000. The timer works even without Supabase keys; only sign-in and saving need them.
 
 ```bash
-npm test          # اختبارات محرّك المؤقت
-npm run build     # فحص البناء قبل النشر
+npm test          # timer engine tests
+npm run build     # production build check
 ```
 
-## إعداد Supabase
+## Supabase setup
 
-1. أنشئ مشروعاً على https://supabase.com.
-2. **SQL Editor:** الصق محتوى `supabase/migrations/0001_workouts.sql` وشغّله. هذا ينشئ جدول `workouts` مع RLS بحيث كل مستخدم يرى تمارينه فقط.
-3. **Project Settings → API:** انسخ `Project URL` والمفتاح العام (anon أو publishable) إلى `.env.local`.
+1. Create a project at https://supabase.com.
+2. **SQL Editor:** paste the contents of `supabase/migrations/0001_workouts.sql` and run it. This creates the `workouts` table with RLS, so each user only sees their own workouts.
+3. **Project Settings → API:** copy the `Project URL` and the public key (anon or publishable) into `.env.local`.
 4. **Authentication → URL Configuration:**
-   - `Site URL`: رابط الموقع بعد النشر (مثلاً `https://gym-timer.vercel.app`)
-   - `Redirect URLs`: أضف
+   - `Site URL`: your deployed address (for example `https://gym-timer-theta.vercel.app`)
+   - `Redirect URLs`: add
      - `http://localhost:3000/**`
-     - `https://gym-timer.vercel.app/**`
-     - `https://*-<your-team>.vercel.app/**` (لروابط المعاينة)
-لا حاجة لتعديل قوالب الإيميل: قوالب Supabase الافتراضية تعمل كما هي، ورابط الدخول يعمل من أي جهاز.
+     - `https://gym-timer-theta.vercel.app/**`
+     - `https://*-<your-team>.vercel.app/**` (for preview deployments)
 
-**كيف يعمل الدخول:** نموذج الدخول يطلب الرابط بطريقة `implicit`، فتصل الجلسة داخل الرابط نفسه (بعد علامة `#`، ولا تصل إلى الخادم). صفحة `/auth/callback` تقرأها، وتمسحها من شريط العنوان فوراً، وتحفظها في الكوكيز.
-اخترنا هذه الطريقة لأن مشاريع Supabase المجانية الجديدة لا تسمح بتعديل قوالب الإيميل بدون SMTP خاص. طريقة `PKCE` الافتراضية أكثر أماناً قليلاً، لكن رابطها يعمل فقط في نفس المتصفح الذي طلبه.
-إذا ربطت SMTP خاص لاحقاً، يمكنك الرجوع إلى طريقة الرابط بـ `token_hash` (المسار `/auth/confirm` ما زال يدعمها).
+No email template changes are needed: Supabase's default templates work as-is, and sign-in links work from any device.
 
-> بريد Supabase المدمج محدود بعدد قليل من الرسائل في الساعة. للإنتاج اربط SMTP خاص (Resend أو Postmark مثلاً) من **Authentication → SMTP Settings**.
+**How sign-in works:** the login form requests the link using the `implicit` flow, so the session travels inside the link itself (after the `#`, which never reaches the server). The `/auth/callback` page reads it, removes it from the address bar right away, and stores it as cookies.
+We use this because new free Supabase projects can't edit email templates without a custom SMTP provider. The default `PKCE` flow is slightly more secure, but its links only work in the browser that requested them.
+If you add custom SMTP later, you can switch to the `token_hash` link instead (the `/auth/confirm` route still supports it).
 
-## النشر على Vercel
+> Supabase's built-in email only sends a few messages per hour. For real users, connect your own SMTP provider (Resend or Postmark, for example) under **Authentication → SMTP Settings**.
 
-1. ارفع المشروع إلى GitHub.
-2. في Vercel اختر **Add New → Project** واستورد المستودع.
-3. أضف متغيرات البيئة `NEXT_PUBLIC_SUPABASE_URL` و `NEXT_PUBLIC_SUPABASE_ANON_KEY` لبيئتي Production و Preview.
-4. انشر، ثم حدّث `Site URL` و `Redirect URLs` في Supabase بالدومين النهائي.
+## Deploy to Vercel
 
-## بنية المشروع
+1. Push the project to GitHub.
+2. In Vercel choose **Add New → Project** and import the repository.
+3. Add the environment variables `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` for Production and Preview.
+4. Deploy, then update `Site URL` and `Redirect URLs` in Supabase with the final domain.
+
+Every push to `main` redeploys automatically.
+
+## Project structure
 
 ```
-supabase/migrations/0001_workouts.sql   جدول التمارين + RLS
-src/proxy.ts                            تحديث الجلسة وحماية /workouts
-src/lib/timeline.ts                     تحويل التمرين إلى تسلسل مقاطع (مع اختبارات)
-src/hooks/useIntervalTimer.ts           محرّك المؤقت (بلا انحراف زمني)
-src/hooks/useWakeLock.ts                إبقاء الشاشة مضاءة
-src/lib/audio.ts                        الصفارات (Web Audio)
-src/components/WorkoutEditor.tsx        محرّر الخطوات والجولات
-src/components/RunClient.tsx            شاشة التشغيل
-src/app/login, src/app/auth/*           الرابط السحري (callback للرابط، confirm للروابط القديمة) وتسجيل الخروج
-src/app/workouts/*                      قائمة التمارين المحفوظة، إنشاء، تعديل، حذف
+supabase/migrations/0001_workouts.sql   workouts table + RLS
+src/proxy.ts                            session refresh, protects /workouts
+src/lib/timeline.ts                     turns a workout into a sequence of segments (tested)
+src/hooks/useIntervalTimer.ts           drift-free timer engine
+src/hooks/useWakeLock.ts                keeps the screen on
+src/lib/audio.ts                        beeps (Web Audio)
+src/components/WorkoutEditor.tsx        step and round editor
+src/components/RunClient.tsx            run screen
+src/app/login, src/app/auth/*           magic link (callback for new links, confirm for old ones) and sign-out
+src/app/workouts/*                      saved workouts: list, create, edit, delete
 ```

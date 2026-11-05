@@ -15,7 +15,7 @@ export default async function LoginPage({
   if (!isSupabaseConfigured()) {
     return (
       <div className="mx-auto max-w-sm py-12 text-center text-zinc-400">
-        تسجيل الدخول غير مُفعّل بعد: أضف مفاتيح Supabase إلى <code dir="ltr">.env.local</code>.
+        Sign-in is not set up yet: add your Supabase keys to <code>.env.local</code>.
       </div>
     )
   }
@@ -28,13 +28,13 @@ export default async function LoginPage({
 
   return (
     <div className="mx-auto max-w-sm py-12">
-      <h1 className="mb-2 text-2xl font-bold">تسجيل الدخول</h1>
+      <h1 className="mb-2 text-2xl font-bold">Sign in</h1>
       <p className="mb-6 text-sm text-zinc-400">
-        نرسل لك رابط دخول على إيميلك، بدون كلمة مرور. الحساب يُنشأ تلقائياً أول مرة.
+        We'll email you a sign-in link. No password needed; your account is created the first time.
       </p>
       {params.error && (
         <p className="mb-4 rounded-xl bg-red-950/60 p-3 text-sm text-red-300">
-          الرابط غير صالح أو انتهت صلاحيته. اطلب رابطاً جديداً.
+          That link is invalid or has expired. Request a new one.
         </p>
       )}
       <LoginForm next={next} />

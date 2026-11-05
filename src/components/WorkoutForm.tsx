@@ -29,7 +29,7 @@ export function WorkoutForm({ initial, workoutId }: Props) {
     setError(null)
     const parsed = workoutSchema.safeParse(workout)
     if (!parsed.success) {
-      setError(parsed.error.issues[0]?.message ?? 'بيانات غير صالحة')
+      setError(parsed.error.issues[0]?.message ?? 'Invalid workout')
       return
     }
     startTransition(async () => {
@@ -50,7 +50,7 @@ export function WorkoutForm({ initial, workoutId }: Props) {
         disabled={pending}
         className="w-full rounded-2xl bg-emerald-500 py-4 text-lg font-bold text-zinc-950 hover:bg-emerald-400 disabled:opacity-50"
       >
-        {pending ? 'جارٍ الحفظ…' : 'احفظ التمرين'}
+        {pending ? 'Saving…' : 'Save workout'}
       </button>
     </div>
   )

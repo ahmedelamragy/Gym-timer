@@ -29,7 +29,7 @@ export function HomeClient() {
   return (
     <div className="space-y-6">
       <div>
-        <p className="mb-2 text-sm text-zinc-400">قوالب جاهزة</p>
+        <p className="mb-2 text-sm text-zinc-400">Presets</p>
         <div className="flex flex-wrap gap-2">
           {PRESETS.map((p) => (
             <button
@@ -53,13 +53,13 @@ export function HomeClient() {
           onClick={() => router.push('/run')}
           className="flex-1 rounded-2xl bg-emerald-500 py-4 text-lg font-bold text-zinc-950 shadow-lg shadow-black/40 hover:bg-emerald-400 disabled:opacity-40"
         >
-          ابدأ
+          Start
         </button>
         <Link
           href="/workouts/new"
           className="rounded-2xl border border-zinc-700 bg-zinc-900 px-6 py-4 text-lg font-semibold shadow-lg shadow-black/40 hover:bg-zinc-800"
         >
-          احفظ
+          Save
         </Link>
       </div>
     </div>

@@ -6,12 +6,12 @@ import type { Phase, Step, StepKind, WorkoutInput } from '@/lib/types'
 import { clamp } from '@/lib/utils'
 
 const SECTIONS: { phase: Phase; title: string; hint: string }[] = [
-  { phase: 'warmup', title: 'الإحماء', hint: 'مرة واحدة في البداية' },
-  { phase: 'round', title: 'الجولة', hint: 'تتكرر بعدد الجولات' },
-  { phase: 'cooldown', title: 'التهدئة', hint: 'مرة واحدة في النهاية' },
+  { phase: 'warmup', title: 'Warm-up', hint: 'Plays once at the start' },
+  { phase: 'round', title: 'Round', hint: 'Repeats for each round' },
+  { phase: 'cooldown', title: 'Cool-down', hint: 'Plays once at the end' },
 ]
 
-const KIND_LABEL: Record<StepKind, string> = { work: 'تمرين', rest: 'راحة' }
+const KIND_LABEL: Record<StepKind, string> = { work: 'Work', rest: 'Rest' }
 
 const inputCls =
   'w-full rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 outline-none focus:border-emerald-500'
@@ -53,8 +53,8 @@ export function WorkoutEditor({ value, onChange }: Props) {
 
   function addStep(phase: Phase) {
     const last = value.steps.filter((s) => s.phase === phase).at(-1)
-    if (phase === 'warmup') return setSteps([...value.steps, newStep(phase, 'work', 'إحماء', 60)])
-    if (phase === 'cooldown') return setSteps([...value.steps, newStep(phase, 'rest', 'تهدئة', 60)])
+    if (phase === 'warmup') return setSteps([...value.steps, newStep(phase, 'work', 'Warm-up', 60)])
+    if (phase === 'cooldown') return setSteps([...value.steps, newStep(phase, 'rest', 'Cool-down', 60)])
     const kind: StepKind = last?.kind === 'work' ? 'rest' : 'work'
     setSteps([...value.steps, newStep(phase, kind, KIND_LABEL[kind], kind === 'work' ? 30 : 15)])
   }
@@ -63,19 +63,19 @@ export function WorkoutEditor({ value, onChange }: Props) {
     <div className="space-y-5">
       <div className="grid gap-4 sm:grid-cols-[1fr_auto]">
         <label className="block">
-          <span className="mb-1 block text-sm text-zinc-400">اسم التمرين</span>
+          <span className="mb-1 block text-sm text-zinc-400">Workout name</span>
           <input
             value={value.name}
             onChange={(e) => onChange({ ...value, name: e.target.value })}
             maxLength={60}
-            placeholder="مثلاً: Tabata الصباح"
+            placeholder="e.g. Morning Tabata"
             className={inputCls}
           />
         </label>
         <div>
-          <span className="mb-1 block text-sm text-zinc-400">عدد الجولات</span>
+          <span className="mb-1 block text-sm text-zinc-400">Rounds</span>
           <div className="flex items-center gap-2">
-            <button type="button" className={`${iconBtn} border border-zinc-700`} onClick={() => setRounds(value.rounds - 1)} aria-label="أنقص جولة">
+            <button type="button" className={`${iconBtn} border border-zinc-700`} onClick={() => setRounds(value.rounds - 1)} aria-label="One less round">
               −
             </button>
             <input
@@ -85,10 +85,10 @@ export function WorkoutEditor({ value, onChange }: Props) {
               max={99}
               value={value.rounds}
               onChange={(e) => setRounds(parseInt(e.target.value, 10))}
-              aria-label="عدد الجولات"
+              aria-label="Number of rounds"
               className="w-16 rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-center tabular-nums outline-none focus:border-emerald-500"
             />
-            <button type="button" className={`${iconBtn} border border-zinc-700`} onClick={() => setRounds(value.rounds + 1)} aria-label="زد جولة">
+            <button type="button" className={`${iconBtn} border border-zinc-700`} onClick={() => setRounds(value.rounds + 1)} aria-label="One more round">
               +
             </button>
           </div>
@@ -119,7 +119,7 @@ export function WorkoutEditor({ value, onChange }: Props) {
                       className={`rounded-lg px-2.5 py-1 text-xs font-semibold ${
                         step.kind === 'work' ? 'bg-emerald-600' : 'bg-sky-600'
                       }`}
-                      title="بدّل بين تمرين وراحة"
+                      title="Switch between work and rest"
                     >
                       {KIND_LABEL[step.kind]}
                     </button>
@@ -127,7 +127,7 @@ export function WorkoutEditor({ value, onChange }: Props) {
                       value={step.label}
                       onChange={(e) => updateStep(step.id, { label: e.target.value })}
                       maxLength={40}
-                      aria-label="اسم الخطوة"
+                      aria-label="Step name"
                       className="min-w-24 flex-1 rounded-lg border border-transparent bg-transparent px-2 py-1 outline-none focus:border-zinc-600"
                     />
                     <label className="flex items-center gap-1">
@@ -140,19 +140,19 @@ export function WorkoutEditor({ value, onChange }: Props) {
                         onChange={(e) =>
                           updateStep(step.id, { seconds: clamp(parseInt(e.target.value, 10) || 0, 0, 3600) })
                         }
-                        aria-label="المدة بالثواني"
+                        aria-label="Duration in seconds"
                         className="w-16 rounded-lg border border-zinc-700 bg-zinc-900 px-2 py-1 text-center tabular-nums outline-none focus:border-emerald-500"
                       />
-                      <span className="text-xs text-zinc-400">ث</span>
+                      <span className="text-xs text-zinc-400">s</span>
                     </label>
                     <div className="flex">
-                      <button type="button" className={iconBtn} onClick={() => moveStep(step.id, -1)} disabled={i === 0} aria-label="انقل للأعلى">
+                      <button type="button" className={iconBtn} onClick={() => moveStep(step.id, -1)} disabled={i === 0} aria-label="Move up">
                         ↑
                       </button>
-                      <button type="button" className={iconBtn} onClick={() => moveStep(step.id, 1)} disabled={i === steps.length - 1} aria-label="انقل للأسفل">
+                      <button type="button" className={iconBtn} onClick={() => moveStep(step.id, 1)} disabled={i === steps.length - 1} aria-label="Move down">
                         ↓
                       </button>
-                      <button type="button" className={`${iconBtn} hover:text-red-400`} onClick={() => removeStep(step.id)} aria-label="احذف الخطوة">
+                      <button type="button" className={`${iconBtn} hover:text-red-400`} onClick={() => removeStep(step.id)} aria-label="Delete step">
                         ✕
                       </button>
                     </div>
@@ -166,17 +166,17 @@ export function WorkoutEditor({ value, onChange }: Props) {
               onClick={() => addStep(section.phase)}
               className="mt-3 text-sm font-medium text-emerald-400 hover:text-emerald-300"
             >
-              + أضف خطوة
+              + Add step
             </button>
           </section>
         )
       })}
 
-      {!hasRoundStep && <p className="text-sm text-amber-400">أضف خطوة واحدة على الأقل في الجولة.</p>}
+      {!hasRoundStep && <p className="text-sm text-amber-400">Add at least one step to the round.</p>}
 
       <p className="text-sm text-zinc-400">
-        المدة الكلية:{' '}
-        <span dir="ltr" className="font-semibold text-zinc-100 tabular-nums">
+        Total time:{' '}
+        <span className="font-semibold text-zinc-100 tabular-nums">
           {formatTime(total)}
         </span>
       </p>

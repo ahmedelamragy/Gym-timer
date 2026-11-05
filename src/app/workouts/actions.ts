@@ -19,7 +19,7 @@ function validate(input: unknown) {
   const parsed = workoutSchema.safeParse(input)
   return parsed.success
     ? { data: parsed.data, error: null }
-    : { data: null, error: parsed.error.issues[0]?.message ?? 'بيانات غير صالحة' }
+    : { data: null, error: parsed.error.issues[0]?.message ?? 'Invalid workout' }
 }
 
 export async function createWorkout(input: unknown): Promise<Result> {
@@ -27,10 +27,10 @@ export async function createWorkout(input: unknown): Promise<Result> {
   if (!data) return { error }
 
   const { supabase, user } = await requireUser()
-  if (!user) return { error: 'سجّل دخولك أولاً' }
+  if (!user) return { error: 'Please sign in first' }
 
   const { error: dbError } = await supabase.from('workouts').insert({ ...data, user_id: user.id })
-  if (dbError) return { error: 'تعذّر الحفظ، حاول مرة أخرى' }
+  if (dbError) return { error: 'Could not save. Please try again.' }
 
   revalidatePath('/workouts')
   redirect('/workouts')
@@ -41,7 +41,7 @@ export async function updateWorkout(id: string, input: unknown): Promise<Result>
   if (!data) return { error }
 
   const { supabase, user } = await requireUser()
-  if (!user) return { error: 'سجّل دخولك أولاً' }
+  if (!user) return { error: 'Please sign in first' }
 
   // RLS limits this to the user's own row; zero rows back means not theirs or gone.
   const { data: rows, error: dbError } = await supabase
@@ -49,8 +49,8 @@ export async function updateWorkout(id: string, input: unknown): Promise<Result>
     .update(data)
     .eq('id', id)
     .select('id')
-  if (dbError) return { error: 'تعذّر الحفظ، حاول مرة أخرى' }
-  if (!rows?.length) return { error: 'التمرين غير موجود' }
+  if (dbError) return { error: 'Could not save. Please try again.' }
+  if (!rows?.length) return { error: 'Workout not found' }
 
   revalidatePath('/workouts')
   redirect('/workouts')

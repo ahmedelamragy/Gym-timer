@@ -7,10 +7,10 @@ export function DeleteWorkoutButton({ id, name }: { id: string; name: string }) 
     <form
       action={deleteWorkout.bind(null, id)}
       onSubmit={(e) => {
-        if (!confirm(`حذف «${name}»؟`)) e.preventDefault()
+        if (!confirm(`Delete "${name}"?`)) e.preventDefault()
       }}
     >
-      <button className="text-zinc-400 hover:text-red-400">حذف</button>
+      <button className="text-zinc-400 hover:text-red-400">Delete</button>
     </form>
   )
 }
