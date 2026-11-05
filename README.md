@@ -32,11 +32,16 @@ npm run build     # فحص البناء قبل النشر
      - `http://localhost:3000/**`
      - `https://gym-timer.vercel.app/**`
      - `https://*-<your-team>.vercel.app/**` (لروابط المعاينة)
-5. **(موصى به) Authentication → Email Templates → Magic Link:** غيّر الرابط إلى:
+5. **(موصى به) Authentication → Email Templates:** غيّر الرابط في قالبين:
+   - **Magic Link** (للمستخدمين الحاليين)
+   - **Confirm signup** (لأول دخول لمستخدم جديد)
+
+   في كليهما استبدل الرابط بهذا السطر:
    ```html
    <a href="{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=email">سجّل الدخول</a>
    ```
    بهذا يعمل الرابط حتى لو فُتح على جهاز غير الذي طُلب منه. بدون هذا التعديل يعمل القالب الافتراضي أيضاً، لكن يجب فتح الرابط في نفس المتصفح.
+   هذا الرابط يعتمد على `Redirect URLs` في الخطوة 4: إذا كان العنوان غير مضاف هناك، سيفشل الرابط.
 
 > بريد Supabase المدمج محدود بعدد قليل من الرسائل في الساعة. للإنتاج اربط SMTP خاص (Resend أو Postmark مثلاً) من **Authentication → SMTP Settings**.
 
