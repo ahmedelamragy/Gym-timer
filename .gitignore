@@ -9,3 +9,5 @@ next-env.d.ts
 
 # Local Claude preview config (machine-specific paths)
 .claude/
+.env*
+!.env.local.example
